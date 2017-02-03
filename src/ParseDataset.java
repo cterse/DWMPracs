@@ -10,7 +10,7 @@ public class ParseDataset {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		File dataset = new File("Dataset/datasetInCSV.csv");
+		File dataset = new File("Dataset/ds1.csv");
 		Scanner t = null;
 		try {
 			t = new Scanner(dataset);

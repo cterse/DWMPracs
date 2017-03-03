@@ -1,6 +1,7 @@
 package attributerelevanceanalysis;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,15 +14,25 @@ public class AttributeRelevanceAnalysis {
         
         ParseDataset parse = new ParseDataset(datasetPath);
         
-        //System.out.println(data);
-        
         //parse.printDataset();
         
         double datasetEntropy = calculateEntropy(parse, parse.getDatasetClass());
         System.out.println("Entropy of dataset = "+datasetEntropy);
         //System.out.println("API entropy = "+parse.getDatasetEntropy());
         
-        
+        List<String> attributesList = parse.getAttributesAsList();      //Get attributes in a list
+        Map<String, Integer> attributesEntropy = new HashMap<String, Integer>();
+        Iterator<String> attributesListIt = attributesList.iterator();
+        while( attributesListIt.hasNext() ) {
+            //We already got the class entropy, so skip its calculation
+            if( attributesListIt.next().equalsIgnoreCase(parse.getDatasetClass()) )
+                continue;
+            else {
+                String currentAttribute = attributesListIt.next();
+                attributesEntropy.put(currentAttribute, 0);
+                double attrEntropy = calculateEntropy(parse, currentAttribute);
+            }
+        }
         
     }
 
@@ -57,4 +68,5 @@ public class AttributeRelevanceAnalysis {
         
         return entropy;
     }
+
 }

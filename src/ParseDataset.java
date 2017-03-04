@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -13,10 +14,40 @@ public class ParseDataset {
     private int numOfRecords;
     private String[] attributes;
     private String datasetPath; 
+    private boolean hasIdAttribute; //true of the first column is an ID attribute
     
     ParseDataset(String datasetPath) {
         this.datasetPath = datasetPath;
-        values = parseDataset();
+        values = parseDataset();    //also sets attributes[], numOfRecords attribute        
+        checkIdAttribute();     //sets hasIdAttribute attribute
+    }
+    
+    public boolean hasIdAttribute() {
+        return hasIdAttribute;
+    }
+    
+    public String getIdAttribute() {
+        return attributes[0];
+    }
+    
+    private void checkIdAttribute() {
+        //check if the first column is an ID attr
+        //it must be unique ints
+        int uniqueCount = 0;
+        Iterator<String> tempIt = values.get(attributes[0]).iterator();
+        while( tempIt.hasNext() ) {
+            try {
+                int tempInt = Integer.parseInt(tempIt.next());
+                if( !values.get(attributes[0]).contains(tempInt) ) 
+                    uniqueCount++;
+            } catch(NumberFormatException e) {
+                hasIdAttribute = false;
+                return;
+            }
+        }
+        if(uniqueCount == numOfRecords)
+            hasIdAttribute = true;
+        else hasIdAttribute = false;
     }
     
     public Map<String, List<String>> getParsedDataset() {
@@ -137,6 +168,27 @@ public class ParseDataset {
             }
         }
         return entropy;
+    }
+    
+    List<String> getAttributeTypes(String currentAttribute) {
+        List<String> attrTypes;
+        if(values == null) {
+            System.out.println("Set mapping. returning null");
+            return null;
+        }
+        if( !values.containsKey(currentAttribute) ) {
+            System.out.println("Attribute not found. Returning null.");
+            return null;
+        } else {
+            attrTypes = new ArrayList<String>();
+            Iterator<String> valuesIt = values.get(currentAttribute).iterator();
+            while( valuesIt.hasNext() ) {
+                String temp = valuesIt.next();
+                if( !attrTypes.contains(temp) )
+                    attrTypes.add(temp);
+            }
+        }
+        return attrTypes;
     }
 
 //    

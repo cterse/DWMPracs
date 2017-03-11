@@ -7,25 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-class Datapoint {
-    int x, y;
-    
-    Datapoint(int a, int b) {
-        x = a; y = b;
-    }
-    
-    public void displayDatapoint() {
-        System.out.println("{"+x+", "+y+"}");
-    }
-    
-    public double getEuclideanDistance(Datapoint p) {
-        double distance = 0;
-        distance = Math.pow((double)x - p.x, 2) + Math.pow((double)y - p.y, 2);
-        distance = Math.sqrt(distance);
-        return distance;
-    }
-}
-
 class NearestNeighbourClustering {
     public static void main(String[] args) {
         Scanner t = new Scanner(System.in);
@@ -34,7 +15,7 @@ class NearestNeighbourClustering {
         System.out.println("Enter the datapoints: ");
         List<Datapoint> dataset = new ArrayList<Datapoint>();
         for(int i=0; i<n; i++) {
-            dataset.add(new Datapoint(t.nextInt(), t.nextInt()));
+            dataset.add(new Datapoint(t.nextDouble(), t.nextDouble()));
         }
         System.out.println("Enter threshold value: ");
         double threshold = t.nextDouble();

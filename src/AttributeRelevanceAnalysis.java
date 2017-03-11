@@ -46,7 +46,7 @@ public class AttributeRelevanceAnalysis {
 
     static double calculateEntropy(ParseDataset parse, String datasetClass) {
         double entropy = 0;
-        List<String> classesTypes = parse.typesOfClasses();
+        List<String> classesTypes = parse.getTypesOfClasses();
         //System.out.println(classesTypes);
         //System.out.println(parse.getRecordsCount());
         Map<String, List<String>> data = parse.getParsedDataset();
@@ -81,8 +81,25 @@ public class AttributeRelevanceAnalysis {
         double entropy = 0;
         if(selectedAttrList == null) {
             //this is the 1st iteration    
-            List<String> attrTypes = parse.getAttributeTypes(currentAttribute); //List to store types of currentAttribute
+            List<String> currentAttrTypes = parse.getAttributeTypes(currentAttribute); //List to store types of currentAttribute
             //System.out.println(currentAttribute+" = "+attrTypes);
+            
+            List<String> classTypes = parse.getTypesOfClasses();    //List to hold class types
+            
+            Map<String, List<Integer>> classTypeCount = new HashMap<String, List<Integer>>(); //Map to store the currentAttribue types and their classTypeCount
+            //In the above Map, the class types will be stored in order of the classes in the classTypes List
+            
+            //System.out.println(currentAttribute+" = "+parse.getAttributeValuesAsList(currentAttribute));
+            List<String> currentAttrValues = parse.getAttributeValuesAsList(currentAttribute);
+            
+            //Initialize the map
+            for(int i=0; i<currentAttrTypes.size(); i++) {
+                classTypeCount.put(currentAttrTypes.get(i), new ArrayList<Integer>());
+                for(int j=0; j<classTypes.size(); j++)
+                    classTypeCount.get(currentAttrTypes.get(i)).add(0);
+            }
+            //System.out.println(classTypeCount);
+          
             
         } else {
             //this is not the first iteration and the dataset is split using some attributes given in selectedAttrList

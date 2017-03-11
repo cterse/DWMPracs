@@ -106,6 +106,24 @@ public class ParseDataset {
         return attributesList;
     }
     
+    public List<String> getAttributeValuesAsList(String attrName) {
+        List<String> attrValues = null;
+        if(values != null) {
+            if(values.containsKey(attrName)) {
+                //AttrName found in map
+                attrValues = values.get(attrName);
+            } else {
+                //AttrName not found in map
+                System.out.println("Attribute name not found. Closing program");
+                System.exit(0);
+            }
+        } else {
+            //Values map not initialized
+            System.out.println("Initialize mapping first. Returning null");
+        }
+        return attrValues;
+    }
+    
     public String getDatasetClass() {
         String datasetClass = null;
         if( attributes!=null ) {
@@ -114,7 +132,7 @@ public class ParseDataset {
         return datasetClass;
     }
     
-    public List<String> typesOfClasses() {
+    public List<String> getTypesOfClasses() {
         //get different types of class values
         if( values == null ) {
             System.out.println("Set mapping first. Returning null");
@@ -150,7 +168,7 @@ public class ParseDataset {
         double entropy = -1;
         if(values!=null) {
             entropy = 0;
-            List<String> classesTypes = this.typesOfClasses();
+            List<String> classesTypes = this.getTypesOfClasses();
             Map<String, Integer> classesCount = new HashMap<String, Integer>();
             for(int i=0; i<classesTypes.size(); i++) {
                 classesCount.put(classesTypes.get(i), 0);
@@ -170,7 +188,7 @@ public class ParseDataset {
         return entropy;
     }
     
-    List<String> getAttributeTypes(String currentAttribute) {
+    public List<String> getAttributeTypes(String currentAttribute) {
         List<String> attrTypes;
         if(values == null) {
             System.out.println("Set mapping. returning null");
@@ -191,63 +209,63 @@ public class ParseDataset {
         return attrTypes;
     }
 
-//    
-//    public static void main(String[] args) {
-//            // TODO Auto-generated method stub
-//            File dataset = new File("Dataset/ds1.csv");
-//            Scanner t = null;
-//            try {
-//                    t = new Scanner(dataset);
-//            } catch (FileNotFoundException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//            }
-//
-//            //get names of attributes
-//            String attributeCSV = t.nextLine();
-//            System.out.println("Attributes: "+attributeCSV);
-//            String[] attributes = attributeCSV.split(",");
-//            //the array "attributes" now contain the attributes
-//
-//            //Storage of the values in the dataset
-//            Map<String, List<String>> values = new HashMap<String, List<String>>();
-//            for(int i=0; i<attributes.length; i++) {
-//                    values.put(attributes[i], new ArrayList());
-//            }
-//            while( t.hasNextLine() ) {
-//                    String[] temp = t.nextLine().split(",");
-//                    for(int i=0; i<temp.length; i++) {
-//                            values.get(attributes[i]).add(temp[i]);
-//                    }
-//            }
-//            for(int i=0; i<attributes.length; i++) {
-//                    if(i == attributes.length-1)
-//                            System.out.print("CLASS:");
-//                    System.out.println(attributes[i]+" = "+values.get(attributes[i]));
-//            }
-//            int numOfRecords = values.get(attributes[0]).size();
-//            System.out.println("Number of total records = "+numOfRecords);
-//
-//            //get different types of class values
-//            List<String> classValues = new ArrayList<String>();
-//            classValues.add( values.get(attributes[attributes.length-1]).get(0) );
-//            for(int i=0; i<numOfRecords; i++) {
-//                    if( !classValues.contains( values.get(attributes[attributes.length-1]).get(i) ) ) {
-//                            classValues.add( values.get(attributes[attributes.length-1]).get(i) );
-//                    }
-//            }
-//            System.out.println("Different types of classes = "+classValues+" ("+classValues.size()+")");
-//
-//            //print records classification
-//            for(int i=0; i<classValues.size(); i++) {
-//                    System.out.print("The class value is "+ classValues.get(i) +" for RID = ");
-//                    for(int j=0; j<values.get(attributes[1]).size(); j++) {
-//                            if( values.get(attributes[attributes.length-1]).get(j).equalsIgnoreCase( classValues.get(i) ) ) {
-//                                    System.out.print( values.get(attributes[0]).get(j) +" ");
-//                            }
-//                    }
-//                    System.out.println();
-//            }
-//
-//    }
+    
+    public static void main(String[] args) {
+            // TODO Auto-generated method stub
+            File dataset = new File("Dataset/ds1.csv");
+            Scanner t = null;
+            try {
+                    t = new Scanner(dataset);
+            } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+            }
+
+            //get names of attributes
+            String attributeCSV = t.nextLine();
+            System.out.println("Attributes: "+attributeCSV);
+            String[] attributes = attributeCSV.split(",");
+            //the array "attributes" now contain the attributes
+
+            //Storage of the values in the dataset
+            Map<String, List<String>> values = new HashMap<String, List<String>>();
+            for(int i=0; i<attributes.length; i++) {
+                    values.put(attributes[i], new ArrayList());
+            }
+            while( t.hasNextLine() ) {
+                    String[] temp = t.nextLine().split(",");
+                    for(int i=0; i<temp.length; i++) {
+                            values.get(attributes[i]).add(temp[i]);
+                    }
+            }
+            for(int i=0; i<attributes.length; i++) {
+                    if(i == attributes.length-1)
+                            System.out.print("CLASS:");
+                    System.out.println(attributes[i]+" = "+values.get(attributes[i]));
+            }
+            int numOfRecords = values.get(attributes[0]).size();
+            System.out.println("Number of total records = "+numOfRecords);
+
+            //get different types of class values
+            List<String> classValues = new ArrayList<String>();
+            classValues.add( values.get(attributes[attributes.length-1]).get(0) );
+            for(int i=0; i<numOfRecords; i++) {
+                    if( !classValues.contains( values.get(attributes[attributes.length-1]).get(i) ) ) {
+                            classValues.add( values.get(attributes[attributes.length-1]).get(i) );
+                    }
+            }
+            System.out.println("Different types of classes = "+classValues+" ("+classValues.size()+")");
+
+            //print records classification
+            for(int i=0; i<classValues.size(); i++) {
+                    System.out.print("The class value is "+ classValues.get(i) +" for RID = ");
+                    for(int j=0; j<values.get(attributes[1]).size(); j++) {
+                            if( values.get(attributes[attributes.length-1]).get(j).equalsIgnoreCase( classValues.get(i) ) ) {
+                                    System.out.print( values.get(attributes[0]).get(j) +" ");
+                            }
+                    }
+                    System.out.println();
+            }
+
+    }
 }

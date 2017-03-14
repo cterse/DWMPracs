@@ -188,7 +188,101 @@ public class ParseDataset {
         return entropy;
     }
     
+    public Map<String, Map<String, Integer>> getAttributeValuesClassCount(String attr) {
+        //check if the specified attribute is present in dataset
+        if(!this.getAttributesAsList().contains(attr)) {
+            System.out.println("getAttributeValuesClassCount() : specified attribute not in dataset.");
+            System.exit(0);
+        }
+        
+        //initialize the map to store the class count
+        Map<String, Map<String, Integer>> attrValuesClassCount = new HashMap<String, Map<String, Integer>>();
+        //the above map maps attribute valueTypes to a second map, which maps classValueTypes to count of attrValueType to that classvalueType
+        Iterator<String> classTypesIt = this.getTypesOfClasses().iterator();
+        Iterator<String> valuesTypesIt = this.getAttributeTypes(attr).iterator();
+        Map<String, Integer> tempMap = new HashMap<String, Integer>();
+        while(classTypesIt.hasNext()) {
+            tempMap.put(classTypesIt.next(), 0);
+        }
+        while(valuesTypesIt.hasNext()) {   
+            attrValuesClassCount.put(valuesTypesIt.next(), new HashMap<String, Integer>(tempMap));
+        }
+        //System.out.println(attr+" = "+attrValuesClassCount);
+        
+        //populate classCount map
+        List<String> attrValues = this.getAttributeValuesAsList(attr);
+        List<String> classValues = this.getAttributeValuesAsList(this.getDatasetClass());
+        if(attrValues.size() != classValues.size()) {
+            //Just a proof check
+            System.out.println("getAttributeValuesClassCount() : attrvalues and classValues size not same.");
+            System.exit(0);
+        } else {
+            for(int i=0; i<attrValues.size(); i++) {
+                int prevCount = attrValuesClassCount.get(attrValues.get(i)).get(classValues.get(i));
+                attrValuesClassCount.get(attrValues.get(i)).put(classValues.get(i), ++prevCount);
+            }
+        }
+        System.out.println(attr+" = "+attrValuesClassCount);
+        
+        return attrValuesClassCount;
+    }
+    
+    public double getAttributeEntropy(String attr) {
+        double entropy = 0;
+        //check if the specified attribute is present in dataset
+        if(!this.getAttributesAsList().contains(attr)) {
+            System.out.println("getAttributeEntropy() : specified attribute not in dataset.");
+            System.exit(0);
+        }
+        
+        //get the classCount for the variable values
+        Map<String, Map<String, Integer>> attrValuesClassCount = this.getAttributeValuesClassCount(attr);
+        //System.out.println(attr+" = "+attrValuesClassCount);
+        
+        //calculate entropy
+        // -(n/total_records)*( (class1Count/n)*(logbase2((class1Count/n))) + other terms )
+        List<Integer> classCounts = null;
+        Iterator<String> mainIt = attrValuesClassCount.keySet().iterator();
+        while(mainIt.hasNext()) {
+            int n = 0;
+            classCounts = new ArrayList<Integer>();
+            String attrValue = mainIt.next();
+            Iterator<String> secIt = attrValuesClassCount.get(attrValue).keySet().iterator();
+            while(secIt.hasNext()) {
+                String classValue = secIt.next();
+                int classValueCount = attrValuesClassCount.get(attrValue).get(classValue);
+                n += classValueCount;
+                classCounts.add(classValueCount);
+            }
+            double sum = 0;
+            for(int i=0; i<classCounts.size(); i++) {
+                if(classCounts.get(i) == 0)
+                    continue;
+                double temp = (classCounts.get(i)/(double)n);
+                double res = temp * Math.log(temp) / Math.log(2);
+                sum += res;
+            }
+            entropy += -((double)n/this.numOfRecords) * sum;
+        }
+        
+        return entropy;
+    }
+    
+    public double getAttributeInfoGain(String attr) {
+        double infoGain = 0;
+        //check if the specified attribute is present in dataset
+        if(!this.getAttributesAsList().contains(attr)) {
+            System.out.println("getAttributeInfoGain() : specified attribute not in dataset.");
+            System.exit(0);
+        }
+        
+        infoGain = this.getDatasetEntropy() - this.getAttributeEntropy(attr);
+        
+        return infoGain;
+    }
+    
     public List<String> getAttributeTypes(String currentAttribute) {
+        //Get the different types of values that the specified attribute can take
         List<String> attrTypes;
         if(values == null) {
             System.out.println("Set mapping. returning null");
@@ -209,7 +303,7 @@ public class ParseDataset {
         return attrTypes;
     }
 
-    
+    /*
     public static void main(String[] args) {
             // TODO Auto-generated method stub
             File dataset = new File("Dataset/ds1.csv");
@@ -268,4 +362,5 @@ public class ParseDataset {
             }
 
     }
+    */
 }

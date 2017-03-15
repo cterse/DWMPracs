@@ -10,7 +10,7 @@ public class LinearRegression {
         System.out.print("Enter the size of dataset: ");
         int n = t.nextInt();
         System.out.println("Enter the datapoints: ");
-        List<Datapoint> dataset = new ArrayList<Datapoint>();
+        List<Datapoint> dataset = new ArrayList<Datapoint>();   //let us store input in Datapoint, where x = input and y = response
         for(int i=0; i<n; i++) {
             dataset.add(new Datapoint(t.nextDouble(), t.nextDouble()));
         }
